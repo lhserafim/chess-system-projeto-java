@@ -50,6 +50,19 @@ public class Board {
         piece.position = position;
     }
 
+    public Piece removePiece(Position position) {
+        if (!positionExists(position)) {
+            throw new BoardException("Position not on the board");
+        }
+        if (piece(position) == null) {
+            return null;
+        }
+        Piece aux = piece(position); // Recebe a peça que está no tabuleiro nesta posição
+        aux.position = null; // Retiro a peça do tabuleiro
+        pieces[position.getRow()][position.getColumn()] = null;
+        return aux; // Contem a peça retirada
+    }
+
     // Validar posições no tabuleiro
     private boolean positionExists(int row, int column) {
         // Validar pela dimensão do tabuleiro 8 x 8
