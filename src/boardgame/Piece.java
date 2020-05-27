@@ -3,7 +3,7 @@ package boardgame;
 public class Piece {
     // A classe foi criada como protected pois esta posição é uma posição simples de matriz e não uma
     // posição do jogo de Xadrez
-    protected Position position;
+    protected Position position; // Protected - acessível a mesma package
     private Board board;
 
     public Piece (Board board) {
