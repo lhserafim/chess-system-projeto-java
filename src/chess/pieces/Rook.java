@@ -14,4 +14,9 @@ public class Rook extends ChessPiece {
     public String toString() {
         return "R"; // Retorna a letra que corresponde a peça no tabuleiro
     }
+
+    @Override
+    public boolean[][] possibleMoves() {
+        return new boolean[0][];
+    }
 }

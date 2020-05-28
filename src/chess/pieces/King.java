@@ -14,4 +14,10 @@ public class King extends ChessPiece {
     public String toString() {
         return "K"; // Retorna a letra que corresponde a peça no tabuleiro
     }
+
+    @Override
+    public boolean[][] possibleMoves() {
+        // Será implementado mais tarde
+        return new boolean[0][];
+    }
 }

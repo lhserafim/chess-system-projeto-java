@@ -48,6 +48,10 @@ public class ChessMatch {
         if (!board.thereIsAPiece(position)) {
             throw new ChessException("There is no piece on the source position");
         }
+        // Acessa o tabuleiro na posição de origem e valida se tem movimentos possíveis
+        if (!board.piece(position).isThereAnyPossibleMove()){
+            throw new ChessException("There is no possible moves for the chosen piece");
+        }
     }
 
     // Colocando as peças no tabuleiro usando a posição do Xadrez (a1, b2, etc)
