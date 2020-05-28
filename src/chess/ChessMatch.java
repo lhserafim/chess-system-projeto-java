@@ -9,12 +9,24 @@ import chess.pieces.Rook;
 // Esta classe tem as regras do jogo do Xadrez
 public class ChessMatch {
 
+    private int turn;
+    private Color currentPlayer;
     private Board board;
 
     // Definir a dimensão do tabuleiro do Xadrez
     public ChessMatch() {
         board = new Board(8,8);
+        turn = 1;
+        currentPlayer = Color.WHITE;
         initialSetup();
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
     }
 
     //Retorna a matriz de peças de Xadrez correspondentes a esta partida
@@ -43,6 +55,7 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+        nextTurn();
         return (ChessPiece)capturedPiece; // Fazer downcasting porque a peça é do tipo Piece
     }
 
@@ -56,6 +69,10 @@ public class ChessMatch {
         if (!board.thereIsAPiece(position)) {
             throw new ChessException("There is no piece on the source position");
         }
+        // Precisei fazer o downcasting para chamar .getColor()
+        if (currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
+            throw new ChessException("The chosen piece is not yours");
+        }
         // Acessa o tabuleiro na posição de origem e valida se tem movimentos possíveis
         if (!board.piece(position).isThereAnyPossibleMove()){
             throw new ChessException("There is no possible moves for the chosen piece");
@@ -66,6 +83,14 @@ public class ChessMatch {
         if (!board.piece(source).possibleMove(target)) {
             throw new ChessException("The chosen piece can't move to target position");
         }
+    }
+
+    private void nextTurn() {
+        turn ++; // incrementar o turno
+        // Expreção ternária: Como se fosse um DECODE ou IF
+        // Se o jogador atual for branco agora ele vai ser BLACK
+        // DECODE(currentPlayer,Color.WHITE,Color.BLACK, Color.WHITE)
+        currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
     // Colocando as peças no tabuleiro usando a posição do Xadrez (a1, b2, etc)
