@@ -2,6 +2,7 @@ package chess;
 
 import boardgame.Board;
 import boardgame.Piece;
+import boardgame.Position;
 
 // Como transformei a Piece em uma classe abstrata, tenho 2 alternativas p/ esta classe:
 // - Implementar o método da classe abstrata (neste caso não é possível, pois esta classe não conhece os movimentos)
@@ -17,5 +18,10 @@ public abstract class ChessPiece extends Piece {
 
     public Color getColor() {
         return color;
+    }
+
+    protected boolean isThereOpponentPiece(Position position) {
+        ChessPiece p = (ChessPiece)getBoard().piece(position); // recebe a peça que está na posição // fazer downcast
+        return p != null && p.getColor() != p.color;
     }
 }
