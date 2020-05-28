@@ -22,6 +22,6 @@ public abstract class ChessPiece extends Piece {
 
     protected boolean isThereOpponentPiece(Position position) {
         ChessPiece p = (ChessPiece)getBoard().piece(position); // recebe a peça que está na posição // fazer downcast
-        return p != null && p.getColor() != p.color;
+        return p != null && p.getColor() != color;
     }
 }

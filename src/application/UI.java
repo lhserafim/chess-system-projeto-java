@@ -5,8 +5,11 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 // Faz a impressão do Xadrez na tela
 public class UI {
@@ -53,12 +56,13 @@ public class UI {
         catch (InputMismatchException e) {
             throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
         }
-
     }
 
-    public static void printMatch(ChessMatch chessMatch) {
+    public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
         // Imprimir a partida é imprimir o tabuleiro o turno
         printBoard(chessMatch.getPieces());
+        System.out.println();
+        printCapturedPieces(captured);
         System.out.println();
         System.out.println("Turn: " + chessMatch.getTurn());
         System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
@@ -103,5 +107,26 @@ public class UI {
             }
         }
         System.out.print(" "); // Para não ficarem grudados
+    }
+
+    private static void printCapturedPieces(List<ChessPiece> captured) {
+        // Usando expressões Lambda
+        // Transformo minha lista em stream e coloco um predicado (x -> alguma coisa).
+        // Filtro tod o mundo de cor branca
+        // transformo em lista collect(Collectors.toList()
+        List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE).collect(Collectors.toList());
+        List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK).collect(Collectors.toList());
+        System.out.println("Captured pieces: ");
+        System.out.print("White: ");
+        System.out.print(ANSI_WHITE);
+        // Macete p/ imprimir array no java
+        System.out.println(Arrays.toString(white.toArray()));
+        System.out.print(ANSI_RESET);
+
+        System.out.print("Black: ");
+        System.out.print(ANSI_YELLOW);
+        // Macete p/ imprimir array no java
+        System.out.println(Arrays.toString(black.toArray()));
+        System.out.print(ANSI_RESET);
     }
 }
