@@ -8,6 +8,7 @@ import chess.pieces.Rook;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // Esta classe tem as regras do jogo do Xadrez
 public class ChessMatch {
@@ -15,6 +16,7 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private Board board;
+    private boolean check;
 
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
     private List<Piece> capturedPieces = new ArrayList<>();
@@ -78,6 +80,20 @@ public class ChessMatch {
 
         return capturedPiece;
     }
+
+    // Desfazer a jogada
+    private void undoMove(Position source, Position target, Piece capturedPiece) {
+        Piece p = board.removePiece(target);
+        board.placePiece(p, source);
+
+        // Retornar peça para o tabuleiro, caso tenha sido retirada no movimento
+        if (capturedPiece != null) {
+            board.placePiece(capturedPiece, target);
+            capturedPieces.remove(capturedPiece);
+            piecesOnTheBoard.add(capturedPiece);
+        }
+    }
+
     private void validateSourcePosition(Position position) {
         if (!board.thereIsAPiece(position)) {
             throw new ChessException("There is no piece on the source position");
@@ -104,6 +120,27 @@ public class ChessMatch {
         // Se o jogador atual for branco agora ele vai ser BLACK
         // DECODE(currentPlayer,Color.WHITE,Color.BLACK, Color.WHITE)
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+
+    private Color opponent(Color color) {
+        // Escrevendo como se fosse um DECODE
+        // DECODE(color, Color.WHITE, Color.BLACK, Color.WHITE)
+        return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+
+    private ChessPiece king(Color color) {
+        // Crio uma lista do tipo Piece.
+        // Pego as peças do tabuleiro com o piecesOnTheBoard e filtro usando a expressão lambda
+        // "tal que" x -> x.getColor() == color (que veio do argumento)
+        // mas para funcionar, faço o casting para ChessPiece pois é esta classe que tem a cor!!
+        // depois converto para lista novamente .collect(Collectors.toList()
+        List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+        for (Piece p : list) {
+            if (p instanceof King) { // se esta peça for uma instancia de King
+                return (ChessPiece)p; // fazer downcasting p/ ChessPiece
+            }
+        }
+        throw new IllegalStateException("There is no " + color + " king on the board");
     }
 
     // Colocando as peças no tabuleiro usando a posição do Xadrez (a1, b2, etc)
