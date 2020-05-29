@@ -37,6 +37,8 @@ public class ChessMatch {
         return currentPlayer;
     }
 
+    public boolean getCheck() { return check; }
+
     //Retorna a matriz de peças de Xadrez correspondentes a esta partida
     public ChessPiece[][] getPieces() {
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
@@ -63,6 +65,17 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+
+        // Verificar se o jogador se colocou em cheque
+        if (testCheck(currentPlayer)) {
+            undoMove(source,target,capturedPiece); // Desfazer o movimento
+            throw new ChessException("You can't put yourself in check");
+        }
+
+        // Expressão condicional ternária
+        // Testar se o oponente ficou em cheque
+        check = (testCheck(opponent(currentPlayer))) ? true : false;
+
         nextTurn();
         return (ChessPiece)capturedPiece; // Fazer downcasting porque a peça é do tipo Piece
     }
@@ -140,7 +153,22 @@ public class ChessMatch {
                 return (ChessPiece)p; // fazer downcasting p/ ChessPiece
             }
         }
+        // Estou usando uma exceção do JAVA pois é um tipo de erro não previsto, seria um crash no programa. Portanto
+        // o uso de exceçao do JAVA
         throw new IllegalStateException("There is no " + color + " king on the board");
+    }
+
+    private boolean testCheck(Color color) {
+        // Pego a posição do meu rei no formato de Matriz
+        Position kingPosition = king(color).getChessPosition().toPosition();
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+        for (Piece p : opponentPieces) {
+            boolean[][] mat = p.possibleMoves(); // matriz de movimentos possíveis da peça p
+            if (mat[kingPosition.getRow()][kingPosition.getColumn()]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Colocando as peças no tabuleiro usando a posição do Xadrez (a1, b2, etc)

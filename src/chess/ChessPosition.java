@@ -32,7 +32,7 @@ public class ChessPosition {
 
     protected static ChessPosition fromPosition(Position position) {
         // Necessário fazer o cast de char
-        return new ChessPosition((char)('a' - position.getColumn()),8 - position.getRow());
+        return new ChessPosition((char)('a' + position.getColumn()),8 - position.getRow());
     }
 
     @Override
