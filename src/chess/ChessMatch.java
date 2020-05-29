@@ -90,9 +90,10 @@ public class ChessMatch {
     }
 
     private Piece makeMove(Position source, Position target) {
-        Piece p = board.removePiece(source);
+        ChessPiece p = (ChessPiece)board.removePiece(source); // Downcast para ChessPiece
+        p.increaseMoveCount();
         Piece capturedPiece = board.removePiece(target);
-        board.placePiece(p, target);
+        board.placePiece(p, target); // Aqui é feito um upcast naturalmente
 
         // Validar se uma peça foi capturada para remover da lista
         if (capturedPiece != null){
@@ -105,7 +106,8 @@ public class ChessMatch {
 
     // Desfazer a jogada
     private void undoMove(Position source, Position target, Piece capturedPiece) {
-        Piece p = board.removePiece(target);
+        ChessPiece p = (ChessPiece) board.removePiece(target);
+        p.decreaseMoveCount();
         board.placePiece(p, source);
 
         // Retornar peça para o tabuleiro, caso tenha sido retirada no movimento
